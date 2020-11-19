@@ -4,38 +4,39 @@ import { Button, StyleSheet, View } from 'react-native';
 
 import firebase from 'firebase';
 import { TextInput } from 'react-native-gesture-handler';
-
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from './NavigationParams';
 
-type SignInScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignIn'>;
+type SignUpScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignUp'>;
 
-type SignInScreenProps = {
-    navigation: SignInScreenNavigationProp;
+type SignUpScreenProps = {
+    navigation: SignUpScreenNavigationProp;
 }
 
-type SignInScreenState = {
+type SignUpScreenState = {
     email: string;
     password: string;
+    passwordConfirm: string;
 }
-class SignInScreen extends React.Component<SignInScreenProps, SignInScreenState>{
 
-    constructor(props: SignInScreenProps) {
+class SignUpScreen extends React.Component<SignUpScreenProps, SignUpScreenState>{
+
+    constructor(props: SignUpScreenProps) {
         super(props);
-        this.state = { email: "", password: "" }
-    }
-
-    onSignInPress = () => {
-
+        this.state = { email: "", password: "", passwordConfirm: "" }
     }
 
     onSignUpPress = () => {
-        this.props.navigation.navigate('SignUp');
+
+    }
+
+    onBackToSignInPress = () => {
+        this.props.navigation.navigate('SignIn');
     }
 
     render() {
         return(
-            <View style={styles.signInForm}>
+            <View style={styles.signUpForm}>
                 <TextInput
                     style={styles.emailInput}
                     value={this.state.email}
@@ -44,9 +45,13 @@ class SignInScreen extends React.Component<SignInScreenProps, SignInScreenState>
                     style={styles.passwordInput}
                     value={this.state.password}
                     onChangeText={(text) => {this.setState({password: text})}} />
+                <TextInput
+                    style={styles.passwordInput}
+                    value={this.state.passwordConfirm}
+                    onChangeText={(text) => {this.setState({passwordConfirm: text})}} />
 
-                <Button title="Sign In" onPress={this.onSignInPress} />
                 <Button title="Sign Up" onPress={this.onSignUpPress} />
+                <Button title="Back to Sign In" onPress={this.onBackToSignInPress} />
             </View>
         )
     }
@@ -54,7 +59,7 @@ class SignInScreen extends React.Component<SignInScreenProps, SignInScreenState>
 }
 
 const styles = StyleSheet.create({
-    signInForm: {
+    signUpForm: {
         alignItems: "center",
     },
     emailInput: {
@@ -70,4 +75,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default SignInScreen;
+export default SignUpScreen;
