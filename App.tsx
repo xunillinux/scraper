@@ -1,5 +1,5 @@
 import 'react-native-gesture-handler';
-import React, { useState } from 'react';
+import React from 'react';
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -9,48 +9,33 @@ import SignInScreen from './app/screens/SignInScreen';
 import SignUpScreen from './app/screens/SignUpScreen';
 import HomeScreen from './app/screens/HomeScreen';
 
-import firebase from 'firebase';
-import {firebaseConfig} from './app/config/config';
 import { AuthStackParamList, HomeStackParamList } from './app/screens/NavigationParams';
-
-if (!firebase.apps.length){
-  firebase.initializeApp(firebaseConfig);
-}
+import { AuthProvider, useAuth } from './app/context/AuthContext';
 
 const AuthStack = createStackNavigator<AuthStackParamList>();
 const HomeStack = createStackNavigator<HomeStackParamList>();
 
 export default function App() {
 
-  const [isSignedIn, setIsSignedIn] = useState<boolean>();
+  const { authenticated } = useAuth();
 
-  if(firebase.auth().onAuthStateChanged(function(user){
-    if(user){
-       setIsSignedIn(true);
-    }
-  }))
-
-  /*
-  if (state.isLoading) {
-    // We haven't finished checking for the token yet
-    return <SplashScreen />;
-  }*/
-  
   return (
-    <NavigationContainer>
+    <AuthProvider>
+      <NavigationContainer>
 
-      {!isSignedIn ? (
-        <AuthStack.Navigator>
-          <AuthStack.Screen name="SignIn" component={SignInScreen} />
-          <AuthStack.Screen name="SignUp" component={SignUpScreen} />
-        </AuthStack.Navigator>
-      ) : (
-        <HomeStack.Navigator>
-          <HomeStack.Screen name="Home" component={HomeScreen} />
-        </HomeStack.Navigator>
-      )}
-      
-    </NavigationContainer>
+        {!authenticated ? (
+          <AuthStack.Navigator>
+            <AuthStack.Screen name="SignIn" component={SignInScreen} />
+            <AuthStack.Screen name="SignUp" component={SignUpScreen} />
+          </AuthStack.Navigator>
+        ) : (
+          <HomeStack.Navigator>
+            <HomeStack.Screen name="Home" component={HomeScreen} />
+          </HomeStack.Navigator>
+        )}
+        
+      </NavigationContainer>
+    </AuthProvider>
   );
 
 }

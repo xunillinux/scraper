@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
-import { Button, StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, Text, View } from 'react-native';
 
-import firebase from 'firebase';
 import { TextInput } from 'react-native-gesture-handler';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from './NavigationParams';
+
+import { useAuth } from '../context/AuthContext';
+import colors from '../config/colors';
 
 type SignUpScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignUp'>;
 
@@ -13,48 +15,61 @@ type SignUpScreenProps = {
     navigation: SignUpScreenNavigationProp;
 }
 
-type SignUpScreenState = {
-    email: string;
-    password: string;
-    passwordConfirm: string;
-}
+export default function SignUpScreen(props: SignUpScreenProps) {
 
-class SignUpScreen extends React.Component<SignUpScreenProps, SignUpScreenState>{
+    const [ email, setEmail ] = useState<string>();
+    const [ password, setPassword ] = useState<string>();
+    const [ passwordConfirm, setPasswordConfirm ] = useState<string>();
+    const [ error, setError ] = useState<string>();
+    const [ loading, setLoading ] = useState<boolean>();
 
-    constructor(props: SignUpScreenProps) {
-        super(props);
-        this.state = { email: "", password: "", passwordConfirm: "" }
+    const { signUp } = useAuth();
+
+    function onSignUpPress() {
+        
+        if(password !== passwordConfirm){
+            return setError("Passwords don't match!");
+        }
+
+        if(!email){
+            return setError("Email can't be empty!");
+        }
+
+        if(!password){
+            return setError("Password can't be empty!");
+        }
+
+        setError("");
+        setLoading(true);
+
+        signUp(email, password);
+
     }
 
-    onSignUpPress = () => {
-
+    function onBackToSignInPress() {
+        props.navigation.navigate('SignIn');
     }
 
-    onBackToSignInPress = () => {
-        this.props.navigation.navigate('SignIn');
-    }
+    return(
+        <View style={styles.signUpForm}>
+            { error && <Text style={styles.errorMessage}>{error}</Text>}
+            <TextInput
+                style={styles.emailInput}
+                value={email}
+                onChangeText={(text) => {setEmail(text)}} />
+            <TextInput
+                style={styles.passwordInput}
+                value={password}
+                onChangeText={(text) => {setPassword(text)}} />
+            <TextInput
+                style={styles.passwordInput}
+                value={passwordConfirm}
+                onChangeText={(text) => {setPasswordConfirm(text)}} />
 
-    render() {
-        return(
-            <View style={styles.signUpForm}>
-                <TextInput
-                    style={styles.emailInput}
-                    value={this.state.email}
-                    onChangeText={(text) => {this.setState({email: text})}} />
-                <TextInput
-                    style={styles.passwordInput}
-                    value={this.state.password}
-                    onChangeText={(text) => {this.setState({password: text})}} />
-                <TextInput
-                    style={styles.passwordInput}
-                    value={this.state.passwordConfirm}
-                    onChangeText={(text) => {this.setState({passwordConfirm: text})}} />
-
-                <Button title="Sign Up" onPress={this.onSignUpPress} />
-                <Button title="Back to Sign In" onPress={this.onBackToSignInPress} />
-            </View>
-        )
-    }
+            <Button disabled={loading} title="Sign Up" onPress={onSignUpPress} />
+            <Button title="Back to Sign In" onPress={onBackToSignInPress} />
+        </View>
+    )
 
 }
 
@@ -72,7 +87,9 @@ const styles = StyleSheet.create({
         height: 40,
         borderBottomWidth: 2
     },
+    errorMessage: {
+        width: 200,
+        height: 40,
+        color: colors.error,
+    },
 })
-
-
-export default SignUpScreen;

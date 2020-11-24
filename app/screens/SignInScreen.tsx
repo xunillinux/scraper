@@ -2,7 +2,6 @@ import React from 'react';
 
 import { Button, StyleSheet, View } from 'react-native';
 
-import firebase from 'firebase';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { StackNavigationProp } from '@react-navigation/stack';
