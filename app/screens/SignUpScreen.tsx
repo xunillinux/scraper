@@ -17,11 +17,11 @@ type SignUpScreenProps = {
 
 export default function SignUpScreen(props: SignUpScreenProps) {
 
-    const [ email, setEmail ] = useState<string>();
-    const [ password, setPassword ] = useState<string>();
-    const [ passwordConfirm, setPasswordConfirm ] = useState<string>();
-    const [ error, setError ] = useState<string>();
-    const [ loading, setLoading ] = useState<boolean>();
+    const [ email, setEmail ] = useState<string>('');
+    const [ password, setPassword ] = useState<string>('');
+    const [ passwordConfirm, setPasswordConfirm ] = useState<string>('');
+    const [ error, setError ] = useState<string>('');
+    const [ loading, setLoading ] = useState<boolean>(false);
 
     const { signUp } = useAuth();
 
@@ -42,7 +42,10 @@ export default function SignUpScreen(props: SignUpScreenProps) {
         setError("");
         setLoading(true);
 
-        signUp(email, password);
+        signUp(email,password).catch((reason) => {
+            setError(reason); //TODO this seems to be unmounted?
+            setLoading(false);
+        });
 
     }
 
@@ -52,17 +55,21 @@ export default function SignUpScreen(props: SignUpScreenProps) {
 
     return(
         <View style={styles.signUpForm}>
-            { error && <Text style={styles.errorMessage}>{error}</Text>}
+
+            {(error !== '') && <Text style={styles.errorMessage} >{error}</Text>}
+
             <TextInput
                 style={styles.emailInput}
                 value={email}
                 onChangeText={(text) => {setEmail(text)}} />
             <TextInput
                 style={styles.passwordInput}
+                secureTextEntry={true}
                 value={password}
                 onChangeText={(text) => {setPassword(text)}} />
             <TextInput
                 style={styles.passwordInput}
+                secureTextEntry={true}
                 value={passwordConfirm}
                 onChangeText={(text) => {setPasswordConfirm(text)}} />
 

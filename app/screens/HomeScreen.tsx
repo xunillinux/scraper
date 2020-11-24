@@ -1,14 +1,24 @@
 import React from 'react';
 
-import { StyleSheet, View } from 'react-native';
+import { Button, StyleSheet, View } from 'react-native';
+import { useAuth } from '../context/AuthContext';
 
 interface HomeScreenProps {
     
 }
  
 function HomeScreen(props: HomeScreenProps) {
+
+    const { signOut } = useAuth();
+
+    function onSignOutPress(){
+        signOut();
+    }
+
     return ( 
-        <View></View>
+        <View>
+            <Button title="Sign Out" onPress={onSignOutPress} />
+        </View>
     );
 }
 

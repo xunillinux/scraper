@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 import { Button, StyleSheet, View } from 'react-native';
 
@@ -6,6 +6,7 @@ import { TextInput } from 'react-native-gesture-handler';
 
 import { StackNavigationProp } from '@react-navigation/stack';
 import { AuthStackParamList } from './NavigationParams';
+import { useAuth } from '../context/AuthContext';
 
 type SignInScreenNavigationProp = StackNavigationProp<AuthStackParamList, 'SignIn'>;
 
@@ -13,42 +14,45 @@ type SignInScreenProps = {
     navigation: SignInScreenNavigationProp;
 }
 
-type SignInScreenState = {
-    email: string;
-    password: string;
-}
-class SignInScreen extends React.Component<SignInScreenProps, SignInScreenState>{
 
-    constructor(props: SignInScreenProps) {
-        super(props);
-        this.state = { email: "", password: "" }
+function  SignInScreen(props: SignInScreenProps) {
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');    
+
+    const { signIn } = useAuth();
+
+    function onSignInPress () {
+
+        if (email === ''){
+
+        }
+
+        signIn(email,password).catch(() => {
+            //TODO
+        });
     }
 
-    onSignInPress = () => {
-
+    function onSignUpPress() {
+        props.navigation.navigate('SignUp');
     }
 
-    onSignUpPress = () => {
-        this.props.navigation.navigate('SignUp');
-    }
+    return(
+        <View style={styles.signInForm}>
+            <TextInput
+                style={styles.emailInput}
+                value={email}
+                onChangeText={(text) => {setEmail(text)}} />
+            <TextInput
+                style={styles.passwordInput}
+                secureTextEntry={true}
+                value={password}
+                onChangeText={(text) => {setPassword(text)}} />
 
-    render() {
-        return(
-            <View style={styles.signInForm}>
-                <TextInput
-                    style={styles.emailInput}
-                    value={this.state.email}
-                    onChangeText={(text) => {this.setState({email: text})}} />
-                <TextInput
-                    style={styles.passwordInput}
-                    value={this.state.password}
-                    onChangeText={(text) => {this.setState({password: text})}} />
-
-                <Button title="Sign In" onPress={this.onSignInPress} />
-                <Button title="Sign Up" onPress={this.onSignUpPress} />
-            </View>
-        )
-    }
+            <Button title="Sign In" onPress={onSignInPress} />
+            <Button title="Sign Up" onPress={onSignUpPress} />
+        </View>
+    )
 
 }
 
