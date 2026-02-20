@@ -3,7 +3,6 @@
 	import { db } from '$lib/firebase';
 	import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
 
 	$effect(() => {
 		if (!authStore.loading && !authStore.user) goto('/login');
@@ -11,7 +10,7 @@
 
 	let url = $state('');
 	let pattern = $state('');
-	let email = $state('');
+	let email = $state(authStore.user?.email ?? '');
 	let delay = $state('1h');
 	let loading = $state(false);
 	let error = $state('');

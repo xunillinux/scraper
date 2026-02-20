@@ -12,6 +12,7 @@
 	}
 
 	const isAuthPage = $derived($page.url.pathname === '/login');
+	const currentPath = $derived($page.url.pathname);
 </script>
 
 <svelte:head>
@@ -27,7 +28,8 @@
 				<span class="logo-text">ScrapePulse</span>
 			</a>
 			<nav class="nav-links">
-				<a href="/dashboard" class="nav-link">Dashboard</a>
+				<a href="/dashboard" class="nav-link" class:active={currentPath === '/dashboard'}>Dashboard</a>
+				<a href="/analytics" class="nav-link" class:active={currentPath.startsWith('/analytics')}>Analytics</a>
 				<a href="/jobs/new" class="nav-link nav-link--cta">+ New Job</a>
 			</nav>
 			<div class="navbar-right">
@@ -98,10 +100,15 @@
 		text-decoration: none;
 	}
 
-	.nav-link:hover {
+	.nav-link:hover,
+	.nav-link.active {
 		color: var(--text-primary);
 		background: var(--bg-card);
 		text-decoration: none;
+	}
+
+	.nav-link.active {
+		color: var(--text-primary);
 	}
 
 	.nav-link--cta {
